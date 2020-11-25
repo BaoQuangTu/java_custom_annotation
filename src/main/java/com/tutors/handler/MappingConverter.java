@@ -6,11 +6,11 @@ import java.util.Map;
 
 import com.tutors.annotation.MappingField;
 
-public class MappingExcelHandler<T> {
+public class MappingConverter<T> {
     T tObject;
     Map<String, String> mapField = new HashMap<String, String>();
 
-    public MappingExcelHandler(T tObject) {
+    public MappingConverter(T tObject) {
         this.tObject = tObject;
         try {
             this.buildFieldMappingExcel(tObject);
