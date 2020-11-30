@@ -2,7 +2,7 @@ package com.tutors.model;
 
 import com.tutors.annotation.MappingField;
 
-public class Student {
+public class Student extends People {
     private String id;
     @MappingField(prefix="Tên tôi là: ")
     private String name;

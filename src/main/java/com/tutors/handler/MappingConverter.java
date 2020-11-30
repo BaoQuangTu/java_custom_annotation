@@ -1,37 +1,57 @@
 package com.tutors.handler;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.tutors.annotation.MappingField;
 
 public class MappingConverter<T> {
-    T tObject;
-    Map<String, String> mapField = new HashMap<String, String>();
+    List<String> fieldsName = new ArrayList<String>();
 
-    public MappingConverter(T tObject) {
-        this.tObject = tObject;
+    public MappingConverter(Class<T> clazz) {
         try {
-            this.buildFieldMappingExcel(tObject);
+            this.getFieldsNestedSuperClass(clazz);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public String getByFieldName(String fieldName) {
-        return mapField.get(fieldName);
-    }
+    public Map<String, String> buildMapFieldValue(T tObject) throws IllegalAccessException {
+        Map<String, String> mapFieldValue = new HashMap<String, String>();
 
-    private void buildFieldMappingExcel(Object object) throws IllegalArgumentException, IllegalAccessException {	
-        Class<?> clazz = object.getClass();
-        for (Field field : clazz.getDeclaredFields()) {
+        for (String fieldName: fieldsName) {
+            Field field = getFieldByName(tObject.getClass(), fieldName);
             field.setAccessible(true);
 
+            mapFieldValue.put(fieldName, getPrefix(field) + field.get(tObject) + "" + getSuffix(field));
+        }
+
+        return mapFieldValue;
+    }
+
+    private void getFieldsNestedSuperClass(Class<?> clazz) {
+        for (Field field: clazz.getDeclaredFields()) {
             if (field.isAnnotationPresent(MappingField.class)) {
-                mapField.put(field.getName(), getPrefix(field) + field.get(object) + "" + getSuffix(field));
+                fieldsName.add(field.getName());
             }
-        }		
+        }
+
+        if (clazz.getSuperclass().getDeclaredFields().length > 0) {
+            getFieldsNestedSuperClass(clazz.getSuperclass());
+        }
+    }
+
+    private Field getFieldByName(Class<?> clazz, String fieldName) {
+        try {
+            Field field = clazz.getDeclaredField(fieldName);
+            return field;
+        } catch (NoSuchFieldException e) {
+            // return field from super class
+            return getFieldByName(clazz.getSuperclass(), fieldName);
+        }
     }
 
     private String getPrefix(Field field) {
