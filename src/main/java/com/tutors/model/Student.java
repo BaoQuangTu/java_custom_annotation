@@ -4,9 +4,9 @@ import com.tutors.annotation.MappingField;
 
 public class Student extends People {
     private String id;
-    @MappingField(prefix="Tên tôi là: ")
+    @MappingField(prefix="Tên tôi là ")
     private String name;
-    @MappingField(suffix=" là quê tôi")
+    @MappingField(suffix=" là địa chỉ của tôi")
     private String address;
     @MappingField
     private int age;
