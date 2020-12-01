@@ -19,7 +19,7 @@ public class MappingConverter<T> {
         }
     }
 
-    public Map<String, String> buildMapFieldValue(T tObject) throws IllegalAccessException {
+    public Map<String, String> getFieldValueByObject(T tObject) throws IllegalAccessException {
         Map<String, String> mapFieldValue = new HashMap<String, String>();
 
         for (String fieldName: fieldsName) {
