@@ -24,6 +24,11 @@ public class MappingConverter<T> {
 
         for (String fieldName: fieldsName) {
             Field field = getFieldByName(tObject.getClass(), fieldName);
+            
+            if (field == null) {
+                continue;
+            } 
+
             field.setAccessible(true);
 
             mapFieldValue.put(fieldName, getPrefix(field) + field.get(tObject) + "" + getSuffix(field));
@@ -50,8 +55,12 @@ public class MappingConverter<T> {
             return field;
         } catch (NoSuchFieldException e) {
             // return field from super class
-            return getFieldByName(clazz.getSuperclass(), fieldName);
+            if (clazz.getSuperclass().getDeclaredFields().length > 0) {
+                return getFieldByName(clazz.getSuperclass(), fieldName);
+            }
         }
+
+        return null;
     }
 
     private String getPrefix(Field field) {
